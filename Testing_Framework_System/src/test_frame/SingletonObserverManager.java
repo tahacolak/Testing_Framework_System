@@ -15,8 +15,6 @@ class TestManager {
         testExecutionState.attach(new TestObserver("Project Manager"));
         testExecutionState.attach(new TestObserver("Test Lead"));
         testExecutionState.attach(new TestObserver("QA Team"));
-
-        testExecutionState.setState("Test cycle started.");
     }
 
     public static TestManager getInstance() {

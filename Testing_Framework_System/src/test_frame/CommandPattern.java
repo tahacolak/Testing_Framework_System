@@ -30,8 +30,7 @@ class TestExecutionCommand implements Command {
     }
 
     public void execute() {
-        execution.checkInSourceCode();
-        execution.executeTests();
+        TestManager.getInstance().startTestingCycle(execution);
     }
 }
 
