@@ -57,8 +57,6 @@ class TestInvoker {
         for (Command c : commands) c.execute();
     }
 
-    public void clear() {
-        commands.clear();
-    }
+
 }
 

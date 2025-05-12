@@ -2,6 +2,11 @@ package test_frame;
 
 import java.util.*;
 
+/**
+ * CLIProcess interface provides an Command-Line Interface for planning, executing
+ * and managing test cases using a test scheduler and command pattern.
+ */
+
 interface CLIProcess {
     Scanner scanner = new Scanner(System.in);
     TestScheduler scheduler = TestScheduler.getInstance();
@@ -12,6 +17,7 @@ interface CLIProcess {
         System.out.println("\t\t*");
         boolean running = true;
 
+        //User Input Operations over MAIN MENU
         while (running) {
             System.out.println("\n*----------------- MAIN MENU -----------------*");
             System.out.print("|");System.out.print("  1. Plan a Test Execution");System.out.println("                   |");
@@ -32,19 +38,12 @@ interface CLIProcess {
 
 
 
-
-
-
-
-
-
-
             System.out.print("Choose an option [1-14]: ");
 
             int choice;
             try {
                 choice = scanner.nextInt();
-                scanner.nextLine();
+                scanner.nextLine();// Consume newline
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a number.");
                 scanner.nextLine();
@@ -74,6 +73,7 @@ interface CLIProcess {
         }
     }
 
+    //User plan a new test execution by selecting OS and test type then suites will be added in queue
     private void planTest() {
         System.out.println("\n--- Plan a Test Execution ---");
         System.out.print("Select Platform (AIX/macOS): ");
@@ -91,7 +91,7 @@ interface CLIProcess {
             System.out.println("Invalid test type. Use 'GUI', 'Network', or 'All'.");
             return;
         }
-
+        //AIX or macOS selection
         TestSuiteFactory factory = platformInput.equals("aix") ? new AIXTestSuiteFactory() : new MacOSTestSuiteFactory();
         TestSuite suite;
         // Convert platformInput to uppercase for consistency
@@ -103,6 +103,7 @@ interface CLIProcess {
         } else if (typeInput.equals("network")) {
             suite = factory.createNetworkTestSuite();
         } else {
+            //GUI and Network Test Suites' Combination
             suite = new TestSuite(platformInput + " All Tests");
             for (TestComponent tc : factory.createGUITestSuite()) suite.add(tc);
             for (TestComponent tc : factory.createNetworkTestSuite()) suite.add(tc);
@@ -116,7 +117,7 @@ interface CLIProcess {
         System.out.println("✔ Test execution successfully planned.");
     }
 
-    private void listPlannedTests() {
+    private void listPlannedTests() { //List all test executions scheduled in the system till now.
         System.out.println("\n--- Planned Test Executions ---");
         List<TestExecution> executions = scheduler.getPendingExecutions();
         if (executions.isEmpty()) {
@@ -128,6 +129,10 @@ interface CLIProcess {
         }
     }
 
+    /**
+     * Immediately executes all scheduled tests (simulating a Monday schedule).
+     * Each test execution is wrapped in Command objects.
+     */
     private void runTestsNow() {
         System.out.println("\n--- Running All Scheduled Tests (Simulated Monday) ---");
         List<TestExecution> copy = new ArrayList<>(scheduler.getPendingExecutions());
@@ -140,11 +145,12 @@ interface CLIProcess {
         scheduler.clearExecutions();
     }
 
-    private void clearTests() {
+    private void clearTests() { //Clear scheduled tests from scheduler
         scheduler.clearExecutions();
         System.out.println("✔ All scheduled tests have been cleared.");
     }
 
+    //Display test cases inside a given TestSuite object that called suite
     private void viewSuite(TestSuite suite) {
         System.out.println("Test Suite: " + suite.getDescription());
         List<TestComponent> testCases = suite.getTests();
@@ -154,7 +160,7 @@ interface CLIProcess {
             int i = 1;
             for (TestComponent tc : testCases) {
                 System.out.println(i++ + ". Test case:");
-                tc.execute();
+                tc.execute(); // Display each test's execution
             }
         }
     }
@@ -163,7 +169,7 @@ interface CLIProcess {
 // Start here.
 class Main implements CLIProcess {
     public static void main(String[] args) {
-        CLIProcess tfs = new Main();
-        tfs.start();
+        CLIProcess tfs = new Main(); // Create instance of the CLI processor
+        tfs.start(); //Start main menu
     }
 }
