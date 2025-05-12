@@ -131,7 +131,7 @@ interface CLIProcess {
         List<TestExecution> copy = new ArrayList<>(scheduler.getPendingExecutions());
         for (TestExecution exec : copy) {
             TestInvoker invoker = new TestInvoker();
-            invoker.addCommand(new SourceCodeCheckInCommand());
+            // invoker.addCommand(new SourceCodeCheckInCommand());
             invoker.addCommand(new TestExecutionCommand(exec));
             invoker.addCommand(new ReportingCommand(exec));
             invoker.executeAll();
