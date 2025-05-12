@@ -17,10 +17,6 @@ class TestExecution {
         this.suite = suite;
     }
 
-    public void checkInSourceCode() {
-        System.out.println("[Execution] Checking in source code...");
-    }
-
     public void executeTests() {
         System.out.println("[Execution] Executing tests for " + platform + "...");
         suite.execute();

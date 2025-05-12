@@ -17,7 +17,7 @@ interface CLIProcess {
             System.out.print("|");System.out.print("  1. Plan a Test Execution");System.out.println("                   |");
             System.out.print("|");System.out.print("  2. List Planned Executions");System.out.println("                 |");
             System.out.print("|");System.out.print("  3. Run Tests (Simulate Monday)");System.out.println("             |");
-            System.out.print("|");System.out.print(" 4. Simulate Source-Code CheckIn Command");System.out.println("     |");
+            System.out.print("|");System.out.print("  4. Simulate Source Code Check-In Command");System.out.println("   |");
             System.out.print("|");System.out.print("  5. Report Results (Optional)");System.out.println("               |");
             System.out.print("|");System.out.print("  6. Clear All Scheduled Tests");System.out.println("               |");
             System.out.print("|");System.out.print("  7. Run AIX Network Unit Test");System.out.println("               |");
@@ -56,7 +56,7 @@ interface CLIProcess {
                 case 2 -> listPlannedTests();
                 case 3 -> runTestsNow();
                 case 4 -> new SourceCodeCheckInCommand().execute();
-                case 5 -> System.out.println("Reporting is done automatically after source-code checkIn.");
+                case 5 -> System.out.println("Reporting is done automatically after source-code check-in.");
                 case 6-> clearTests();
                 case 7 -> new AIXTestFactory().createNetworkTest().run();
                 case 8 -> new AIXTestFactory().createGUITest().run();
@@ -77,28 +77,30 @@ interface CLIProcess {
     private void planTest() {
         System.out.println("\n--- Plan a Test Execution ---");
         System.out.print("Select Platform (AIX/macOS): ");
-        String platformInput = scanner.nextLine().trim();
+        String platformInput = scanner.nextLine().trim().toLowerCase();
 
-        if (!platformInput.equals("AIX") && !platformInput.equals("macOS")) {
+        if (!platformInput.equals("aix") && !platformInput.equals("macos")) {
             System.out.println("Invalid platform. Use 'AIX' or 'macOS'.");
             return;
         }
 
         System.out.print("Select Test Type (GUI/Network/All): ");
-        String typeInput = scanner.nextLine().trim();
+        String typeInput = scanner.nextLine().trim().toLowerCase();
 
-        if (!typeInput.equals("GUI") && !typeInput.equals("Network") && !typeInput.equals("All")) {
+        if (!typeInput.equals("gui") && !typeInput.equals("network") && !typeInput.equals("all")) {
             System.out.println("Invalid test type. Use 'GUI', 'Network', or 'All'.");
             return;
         }
 
-        TestSuiteFactory factory = platformInput.equals("AIX") ? new AIXTestSuiteFactory() : new MacOSTestSuiteFactory();
+        TestSuiteFactory factory = platformInput.equals("aix") ? new AIXTestSuiteFactory() : new MacOSTestSuiteFactory();
         TestSuite suite;
+        // Convert platformInput to uppercase for consistency
+        platformInput = platformInput.equals("aix") ? "AIX" : "MacOS";
         String description = platformInput + " - " + typeInput + " Test Execution";
 
-        if (typeInput.equals("GUI")) {
+        if (typeInput.equals("gui")) {
             suite = factory.createGUITestSuite();
-        } else if (typeInput.equals("Network")) {
+        } else if (typeInput.equals("network")) {
             suite = factory.createNetworkTestSuite();
         } else {
             suite = new TestSuite(platformInput + " All Tests");
@@ -107,8 +109,8 @@ interface CLIProcess {
         }
 
         TestExecution execution = new TestExecution(description, platformInput, suite);
-        if (typeInput.equals("GUI")) execution.setExecuteGUITestsOnly(true);
-        if (typeInput.equals("Network")) execution.setExecuteNetworkTestsOnly(true);
+        if (typeInput.equals("gui")) execution.setExecuteGUITestsOnly(true);
+        if (typeInput.equals("network")) execution.setExecuteNetworkTestsOnly(true);
 
         scheduler.scheduleExecution(execution);
         System.out.println("✔ Test execution successfully planned.");
@@ -131,7 +133,6 @@ interface CLIProcess {
         List<TestExecution> copy = new ArrayList<>(scheduler.getPendingExecutions());
         for (TestExecution exec : copy) {
             TestInvoker invoker = new TestInvoker();
-            // invoker.addCommand(new SourceCodeCheckInCommand());
             invoker.addCommand(new TestExecutionCommand(exec));
             invoker.addCommand(new ReportingCommand(exec));
             invoker.executeAll();
@@ -159,6 +160,7 @@ interface CLIProcess {
     }
 }
 
+// Start here.
 class Main implements CLIProcess {
     public static void main(String[] args) {
         CLIProcess tfs = new Main();

@@ -27,13 +27,13 @@ class TestManager {
     }
 
     public void startTestingCycle(TestExecution execution) {
+        // Check if the source code is checked in. No testing can be done without the code being checked in.
         if (!isCheckedIn) {
             System.out.println("[Manager] Source code not checked in. Cannot start testing cycle.");
             return;
         }
         System.out.println("[Manager] Starting testing cycle...");
         execution.executeTests();
-        execution.reportResults();
         saveResultToJson(execution);
         System.out.println("[Manager] Testing cycle completed.");
         testExecutionState.setState("Test cycle completed.");
@@ -42,13 +42,21 @@ class TestManager {
     }
 
     private void scheduleMondayTests() {
+        /* Schedule the tests to run every Monday at 09:00.
+        *  Causes a side effect where the code will consider itself late when starting the program and execute all tests
+        *  simultaneously with the first time the run all tests command is given, resulting in the first test run happening twice.
+         */
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         calendar.set(Calendar.HOUR_OF_DAY, 9);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date firstTime = calendar.getTime();
-        if (firstTime.before(new Date())) calendar.add(Calendar.DATE, 7);
+        if (firstTime.before(new Date())) {
+            calendar.add(Calendar.DATE, 7);
+            // This reassignment is a workaround to fix that.
+            firstTime = calendar.getTime();
+        }
 
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
@@ -106,6 +114,7 @@ interface Observer {
 }
 
 class TestObserver implements Observer {
+    // Implementing observers with only a name for the sake of simplicity. This could be extended to have more functionality.
     private final String name;
 
     public TestObserver(String name) {
@@ -124,6 +133,7 @@ abstract class StateSubject {
         observers.add(observer);
     }
 
+    // detach(), despite not being used here, should be implemented for completeness.
     public void detach(Observer observer) {
         observers.remove(observer);
     }
@@ -143,6 +153,7 @@ class TestExecutionState extends StateSubject {
         notifyObservers();
     }
 
+    // A getter for the state, in case we need to check the state later.
     public String getState() {
         return state;
     }
