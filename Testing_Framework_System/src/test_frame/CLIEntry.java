@@ -7,27 +7,39 @@ interface CLIProcess {
     TestScheduler scheduler = TestScheduler.getInstance();
 
     default void start() {
-        System.out.println("***********************");
-        System.out.println("TESTING FRAMEWORK SYSTEM: Scheduler will run every Monday at 09:00");
-        System.out.println("***********************");
+        System.out.println("\n\t\t*");
+        System.out.println("\t\t  TESTING FRAMEWORK SYSTEM ");//Scheduler will run every Monday at 09:00
+        System.out.println("\t\t*");
         boolean running = true;
 
         while (running) {
-            System.out.println("\n--- MAIN MENU ---");
-            System.out.println("1. Plan a Test Execution");
-            System.out.println("2. List Planned Executions");
-            System.out.println("3. Run Tests (Simulate Monday)");
-            System.out.println("4. Report Results (No longer required)");
-            System.out.println("5. Clear All Scheduled Tests");
-            System.out.println("6. Run AIX Network Unit Test");
-            System.out.println("7. Run macOS GUI Unit Test");
-            System.out.println("8. Simulate Source Code Check-in Command");
-            System.out.println("9. View Test Cases in macOS GUI Test Suite");
-            System.out.println("10. View Test Cases in AIX GUI Test Suite");
-            System.out.println("11. View Test Logs");
-            System.out.println("12. Exit");
+            System.out.println("\n*----------------- MAIN MENU -----------------*");
+            System.out.print("|");System.out.print("  1. Plan a Test Execution");System.out.println("                   |");
+            System.out.print("|");System.out.print("  2. List Planned Executions");System.out.println("                 |");
+            System.out.print("|");System.out.print("  3. Run Tests (Simulate Monday)");System.out.println("             |");
+            System.out.print("|");System.out.print(" 4. Simulate Source-Code CheckIn Command");System.out.println("     |");
+            System.out.print("|");System.out.print("  5. Report Results (Optional)");System.out.println("               |");
+            System.out.print("|");System.out.print("  6. Clear All Scheduled Tests");System.out.println("               |");
+            System.out.print("|");System.out.print("  7. Run AIX Network Unit Test");System.out.println("               |");
+            System.out.print("|");System.out.print("  8. Run AIX GUI Unit Test");System.out.println("                   |");
+            System.out.print("|");System.out.print("  9. Run macOS Network Unit Test");System.out.println("             |");
+            System.out.print("|");System.out.print("  10. Run macOS GUI Unit Test");System.out.println("                |");
+            System.out.print("|");System.out.print("  11. View Test Cases in macOS GUI Test Suite");System.out.println("|");
+            System.out.print("|");System.out.print("  12. View Test Cases in AIX GUI Test Suite");System.out.println("  |");
+            System.out.print("|");System.out.print("  13. View Test Logs");System.out.println("                         |");
+            System.out.print("|");System.out.print("  14. Exit");System.out.println("                                   |");
+            System.out.println("------------------------------------------------------");
 
-            System.out.print("Choose an option [1-11]: ");
+
+
+
+
+
+
+
+
+
+            System.out.print("Choose an option [1-14]: ");
 
             int choice;
             try {
@@ -43,16 +55,18 @@ interface CLIProcess {
                 case 1 -> planTest();
                 case 2 -> listPlannedTests();
                 case 3 -> runTestsNow();
-                case 4 -> System.out.println("Reporting is done automatically after tests now.");
-                case 5 -> clearTests();
-                case 6 -> new AIXTestFactory().createNetworkTest().run();
-                case 7 -> new MacOSTestFactory().createGUITest().run();
-                case 8 -> new SourceCodeCheckInCommand().execute();
-                case 9 -> viewSuite(new MacOSTestSuiteFactory().createGUITestSuite());
-                case 10 -> viewSuite(new AIXTestSuiteFactory().createGUITestSuite());
-                case 11 -> LogViewer.printLogs();
-                case 12 -> {
-                    System.out.println("Exiting the system. Goodbye!");
+                case 4 -> new SourceCodeCheckInCommand().execute();
+                case 5 -> System.out.println("Reporting is done automatically after source-code checkIn.");
+                case 6-> clearTests();
+                case 7 -> new AIXTestFactory().createNetworkTest().run();
+                case 8 -> new AIXTestFactory().createGUITest().run();
+                case 9 -> new MacOSTestFactory().createNetworkTest().run();
+                case 10-> new MacOSTestFactory().createGUITest().run();
+                case 11 -> viewSuite(new MacOSTestSuiteFactory().createGUITestSuite());
+                case 12 -> viewSuite(new AIXTestSuiteFactory().createGUITestSuite());
+                case 13 -> LogViewer.printLogs();
+                case 14 -> {
+                    System.out.println("Exiting the Testing Framework System. Goodbye!");
                     running = false;
                 }
                 default -> System.out.println("Invalid selection. Try again.");
@@ -117,6 +131,7 @@ interface CLIProcess {
         List<TestExecution> copy = new ArrayList<>(scheduler.getPendingExecutions());
         for (TestExecution exec : copy) {
             TestInvoker invoker = new TestInvoker();
+            invoker.addCommand(new SourceCodeCheckInCommand());
             invoker.addCommand(new TestExecutionCommand(exec));
             invoker.addCommand(new ReportingCommand(exec));
             invoker.executeAll();
