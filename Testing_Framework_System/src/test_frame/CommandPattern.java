@@ -1,6 +1,11 @@
 /**
- * @author tahacolak
- * @author Aykan Berk Ayvazoglu
+ *Project: Testing Framework System
+ *
+ *@author Taha Yasir Colak
+ *@author Aykan Berk Ayvazoglu
+ *@author Cankat Caglar Acarer
+ *@author Bartu Nurgun
+ *
  */
 package test_frame;
 import java.util.List;

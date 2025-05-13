@@ -1,9 +1,16 @@
 package test_frame;
 
 /**
- * Abstract Factory interface for creating GUI and Network tests.
- * @author tahacolak
+ *Project: Testing Framework System
+ *
+ *@author Taha Yasir Colak
+ *@author Aykan Berk Ayvazoglu
+ *@author Cankat Caglar Acarer
+ *@author Bartu Nurgun
+ *
  */
+
+//Abstract Factory interface for creating GUI and Network tests.
 interface TestCaseFactory {
     GUITest createGUITest();
     NetworkTest createNetworkTest();
