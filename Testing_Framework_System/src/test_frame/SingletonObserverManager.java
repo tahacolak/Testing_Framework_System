@@ -3,12 +3,20 @@ import java.util.*;
 import java.io.*;
 import java.nio.file.*;
 
+/**
+ * Singleton class responsible for managing the test lifecycle.
+ * It ensures source code is checked in before execution and schedules automatic weekly test runs.
+ */
 class TestManager {
     private static TestManager instance;
-    private final Timer timer = new Timer();
-    private static boolean isCheckedIn = false;
-    private static TestExecutionState testExecutionState;
+    private final Timer timer = new Timer(); // Timer to schedule test executions every Monday
+    private static boolean isCheckedIn = false; // Flag indicating whether the source code has been checked in
+    private static TestExecutionState testExecutionState; // Subject for observer pattern (state updates)
 
+    /**
+     * Private constructor to enforce singleton pattern.
+     * Initializes observer pattern and sets up scheduled testing.
+     */
     private TestManager() {
         scheduleMondayTests();
         testExecutionState = new TestExecutionState();
@@ -41,6 +49,7 @@ class TestManager {
         isCheckedIn = false;
     }
 
+    //Uses Java's built-in Timer and TimerTask; like serializable Calendar instance methods
     private void scheduleMondayTests() {
         /* Schedule the tests to run every Monday at 09:00.
         *  Causes a side effect where the code will consider itself late when starting the program and execute all tests
@@ -67,10 +76,12 @@ class TestManager {
                 }
                 TestScheduler.getInstance().clearExecutions();
             }
-        }, firstTime, 7 * 24 * 60 * 60 * 1000);
+        }, firstTime, 7 * 24 * 60 * 60 * 1000);// Repeat weekly
     }
 
-    private void saveResultToJson(TestExecution execution) {
+    //Saves execution results as JSON entries in a local file.
+
+    private void saveResultToJson(TestExecution execution) {//The execution whose result should be logged.
         try {
             Date date=new Date();
             String filename = "test_log.json";
@@ -104,12 +115,17 @@ class TestManager {
         }
     }
 
+    /**
+     * Escapes special characters for safe JSON formatting.
+     * @param input The input string.
+     * @return Escaped string for JSON.
+     */
     private String escapeJson(String input) {
         return input.replace("\"", "\\\"");
     }
 }
 
-interface Observer {
+interface Observer { //Called when the subject's state changes.
     void update();
 }
 
@@ -131,26 +147,27 @@ abstract class StateSubject {
 
     public void attach(Observer observer) {
         observers.add(observer);
-    }
+    }//Attaches a new observer to the subject.
 
     // detach(), despite not being used here, should be implemented for completeness.
     public void detach(Observer observer) {
         observers.remove(observer);
     }
 
+    //Notifies all observers of a state change.
     public void notifyObservers() {
         for (Observer observer : observers) {
             observer.update();
         }
     }
 }
-
+//Concrete subject class representing the state of a test execution cycle.
 class TestExecutionState extends StateSubject {
     private String state;
 
     public void setState(String state) {
         this.state = state;
-        notifyObservers();
+        notifyObservers(); //Notifies observers when state is changed.
     }
 
     // A getter for the state, in case we need to check the state later.
@@ -166,19 +183,29 @@ class TestScheduler {
 
     private TestScheduler() {}
 
+    //return the Singleton instance of TestScheduler.
     public static TestScheduler getInstance() {
         if (instance == null) instance = new TestScheduler();
         return instance;
     }
 
+    /**
+     * Schedules a new test execution to be run on the next cycle.
+     * @param execution The test to be scheduled.
+     */
     public void scheduleExecution(TestExecution execution) {
         pendingExecutions.add(execution);
     }
 
+    /**
+     * Gets the list of all currently scheduled test executions.
+     * @return A list of TestExecution objects.
+     */
     public List<TestExecution> getPendingExecutions() {
         return pendingExecutions;
     }
 
+    //Clears all scheduled test executions.
     public void clearExecutions() {
         pendingExecutions.clear();
     }
