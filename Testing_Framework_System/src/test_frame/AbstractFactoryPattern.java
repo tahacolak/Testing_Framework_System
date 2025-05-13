@@ -61,7 +61,7 @@ class AIXTestSuiteFactory implements TestSuiteFactory {
     }
 }
 
-// Concrete Factory, creates test suites for MacOS
+// Concrete Factory, creates test suites for macOS
 class MacOSTestSuiteFactory implements TestSuiteFactory {
     public TestSuite createGUITestSuite() {
         TestSuite suite = new TestSuite("macOS GUI Test Suite");

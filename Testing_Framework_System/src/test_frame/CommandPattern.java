@@ -11,7 +11,7 @@ package test_frame;
 import java.util.List;
 import java.util.ArrayList;
 
-import static java.lang.Thread.sleep; // instead of Thread.sleep( ), this static method is used due to readibility and short-style
+import static java.lang.Thread.sleep; // instead of Thread.sleep(), this static method is used due to readability and short-style
 
 /**
  * Command interface for executing encapsulated actions.
