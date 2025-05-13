@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 
-//Represents a test execution context for a specific platform and test suite.
+// Represents a test execution context for a specific platform and test suite.
 class TestExecution {
     private final String description;
     String platform; // Target platform for test execution
@@ -44,12 +44,12 @@ class TestExecution {
 
     public void setExecuteGUITestsOnly(boolean value) {
         this.executeGUITestsOnly = value;
-    }//value true to execute only GUI tests, false to disable the filter.
+    }// value true to execute only GUI tests, false to disable the filter.
 
     public void setExecuteNetworkTestsOnly(boolean value) {
         this.executeNetworkTestsOnly = value;
     }
-    //value true to execute only Network tests, false to disable the filter.
+    // value true to execute only Network tests, false to disable the filter.
 
     public String getDescription() {
         return description;
@@ -75,7 +75,7 @@ class LogViewer {
                 System.out.println(line); // Prints each line of the log file
             }
             System.out.println("---------------------------");
-        } catch (IOException e) { //Catching error and report
+        } catch (IOException e) { // Catching error and report
             System.err.println("!!! Error reading log file: " + e.getMessage());
         }
     }

@@ -54,16 +54,14 @@ class TestManager {
         saveResultToJson(execution);
         System.out.println("[Manager] Testing cycle completed.");
         testExecutionState.setState("Test cycle completed.");
-        // Reset the check-in status for the next cycle
-        isCheckedIn = false;
     }
-
-    //Uses Java's built-in Timer and TimerTask; like serializable Calendar instance methods
+    /** Schedule the tests to run every Monday at 09:00.
+     *  Has a (patched) side effect where the code will consider itself late
+     *  when starting the program and execute all test simultaneously with the first time the run
+     *  all tests command is given, resulting in the first test run happening twice.
+     */
+    // Uses Java's built-in Timer and TimerTask; like serializable Calendar instance methods
     private void scheduleMondayTests() {
-        /* Schedule the tests to run every Monday at 09:00.
-        *  Causes a side effect where the code will consider itself late when starting the program and execute all tests
-        *  simultaneously with the first time the run all tests command is given, resulting in the first test run happening twice.
-         */
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         calendar.set(Calendar.HOUR_OF_DAY, 9);
@@ -72,7 +70,7 @@ class TestManager {
         Date firstTime = calendar.getTime();
         if (firstTime.before(new Date())) {
             calendar.add(Calendar.DATE, 7);
-            // This reassignment is a workaround to fix that.
+            // This reassignment is a workaround to fix the issue mentioned in the description.
             firstTime = calendar.getTime();
         }
 
@@ -88,9 +86,9 @@ class TestManager {
         }, firstTime, 7 * 24 * 60 * 60 * 1000);// Repeat weekly
     }
 
-    //Saves execution results as JSON entries in a local file.
+    // Saves execution results as JSON entries in a local file.
 
-    private void saveResultToJson(TestExecution execution) {//The execution whose result should be logged.
+    private void saveResultToJson(TestExecution execution) {// The execution whose result should be logged.
         try {
             Date date=new Date();
             String filename = "test_log.json";
@@ -134,7 +132,7 @@ class TestManager {
     }
 }
 
-interface Observer { //Called when the subject's state changes.
+interface Observer { // Called when the subject's state changes.
     void update();
 }
 
@@ -156,27 +154,27 @@ abstract class StateSubject {
 
     public void attach(Observer observer) {
         observers.add(observer);
-    }//Attaches a new observer to the subject.
+    }// Attaches a new observer to the subject.
 
-    // detach(), despite not being used here, should be implemented for completeness.
+    // detach(), despite not being used in the project context, should be implemented for completeness.
     public void detach(Observer observer) {
         observers.remove(observer);
     }
 
-    //Notifies all observers of a state change.
+    // Notifies all observers of a state change.
     public void notifyObservers() {
         for (Observer observer : observers) {
             observer.update();
         }
     }
 }
-//Concrete subject class representing the state of a test execution cycle.
+// Concrete subject class representing the state of a test execution cycle.
 class TestExecutionState extends StateSubject {
     private String state;
 
     public void setState(String state) {
         this.state = state;
-        notifyObservers(); //Notifies observers when state is changed.
+        notifyObservers(); // Notifies observers when state is changed.
     }
 
     // A getter for the state, in case we need to check the state later.

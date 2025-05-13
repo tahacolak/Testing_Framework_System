@@ -12,7 +12,7 @@ package test_frame;
 import java.util.*;
 
 /**
- * CLIProcess interface provides an Command-Line Interface for planning, executing
+ * CLIProcess interface provides a Command-Line Interface for planning, executing
  * and managing test cases using a test scheduler and command pattern.
  */
 
@@ -22,11 +22,11 @@ interface CLIProcess {
 
     default void start() {
         System.out.println("\n\t\t*");
-        System.out.println("\t\t  TESTING FRAMEWORK SYSTEM ");//Scheduler will run every Monday at 09:00
+        System.out.println("\t\t  TESTING FRAMEWORK SYSTEM "); // Scheduler will run every Monday at 09:00
         System.out.println("\t\t*");
         boolean running = true;
 
-        //User Input Operations over MAIN MENU
+        // User Input Operations over MAIN MENU
         while (running) {
             System.out.println("\n*----------------- MAIN MENU -----------------*");
             System.out.print("|");System.out.print("  1. Plan a Test Execution");System.out.println("                   |");
@@ -64,7 +64,7 @@ interface CLIProcess {
                 case 2 -> listPlannedTests();
                 case 3 -> runTestsNow();
                 case 4 -> new SourceCodeCheckInCommand().execute();
-                case 5 -> System.out.println("Reporting is done automatically after source-code check-in.");
+                case 5 -> System.out.println("Reporting is now done automatically.");
                 case 6-> clearTests();
                 case 7 -> new AIXTestFactory().createNetworkTest().run();
                 case 8 -> new AIXTestFactory().createGUITest().run();
@@ -76,13 +76,14 @@ interface CLIProcess {
                 case 14 -> {
                     System.out.println("Exiting the Testing Framework System. Goodbye!");
                     running = false;
+                    System.exit(0);
                 }
                 default -> System.out.println("Invalid selection. Try again.");
             }
         }
     }
 
-    //User plan a new test execution by selecting OS and test type then suites will be added in queue
+    // User plan a new test execution by selecting OS and test type then suites will be added in queue
     private void planTest() {
         System.out.println("\n--- Plan a Test Execution ---");
         System.out.print("Select Platform (AIX/macOS): ");
@@ -100,10 +101,10 @@ interface CLIProcess {
             System.out.println("Invalid test type. Use 'GUI', 'Network', or 'All'.");
             return;
         }
-        //AIX or macOS selection
+        // AIX or macOS selection
         TestSuiteFactory factory = platformInput.equals("aix") ? new AIXTestSuiteFactory() : new MacOSTestSuiteFactory();
         TestSuite suite;
-        // Convert platformInput to uppercase for consistency
+        // Convert platformInput back to uppercase for display
         platformInput = platformInput.equals("aix") ? "AIX" : "MacOS";
         String description = platformInput + " - " + typeInput + " Test Execution";
 
@@ -112,7 +113,7 @@ interface CLIProcess {
         } else if (typeInput.equals("network")) {
             suite = factory.createNetworkTestSuite();
         } else {
-            //GUI and Network Test Suites' Combination
+            // GUI and Network Test Suites' Combination
             suite = new TestSuite(platformInput + " All Tests");
             for (TestComponent tc : factory.createGUITestSuite()) suite.add(tc);
             for (TestComponent tc : factory.createNetworkTestSuite()) suite.add(tc);
@@ -126,7 +127,7 @@ interface CLIProcess {
         System.out.println("✔ Test execution successfully planned.");
     }
 
-    private void listPlannedTests() { //List all test executions scheduled in the system till now.
+    private void listPlannedTests() { // List all test executions scheduled in the system until now.
         System.out.println("\n--- Planned Test Executions ---");
         List<TestExecution> executions = scheduler.getPendingExecutions();
         if (executions.isEmpty()) {
@@ -154,12 +155,12 @@ interface CLIProcess {
         scheduler.clearExecutions();
     }
 
-    private void clearTests() { //Clear scheduled tests from scheduler
+    private void clearTests() { // Clear scheduled tests from scheduler
         scheduler.clearExecutions();
         System.out.println("✔ All scheduled tests have been cleared.");
     }
 
-    //Display test cases inside a given TestSuite object that called suite
+    // Display test cases inside a given TestSuite object that called suite
     private void viewSuite(TestSuite suite) {
         System.out.println("Test Suite: " + suite.getDescription());
         List<TestComponent> testCases = suite.getTests();
@@ -179,6 +180,6 @@ interface CLIProcess {
 class Main implements CLIProcess {
     public static void main(String[] args) {
         CLIProcess tfs = new Main(); // Create instance of the CLI processor
-        tfs.start(); //Start main menu
+        tfs.start(); // Start main menu
     }
 }

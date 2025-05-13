@@ -18,10 +18,10 @@ import static java.lang.Thread.sleep; // instead of Thread.sleep( ), this static
  * Classes implementing this interface should define the specific behavior in execute().
  */
 interface Command {
-    void execute();//Executes the Command
+    void execute();// Executes the Command
 }
 
-//Once executed, it simulates committing code and notifies the TestManager.
+// Once executed, it simulates committing code and notifies the TestManager.
 class SourceCodeCheckInCommand implements Command {
     public void execute() {
         try {
@@ -43,13 +43,13 @@ class TestExecutionCommand implements Command {
         this.execution = execution;
     }
 
-    //Executes the test by triggering the TestManager.
+    // Executes the test by triggering the TestManager.
     public void execute() {
         TestManager.getInstance().startTestingCycle(execution);
     }
 }
 
-//Represents a command to generate a test execution report.
+// Represents a command to generate a test execution report.
 class ReportingCommand implements Command {
     private final TestExecution execution;
 
@@ -61,13 +61,13 @@ class ReportingCommand implements Command {
         this.execution = execution;
     }
 
-    //Executes the reporting process.
+    // Executes the reporting process.
     public void execute() {
         execution.reportResults();
     }
 }
 
-//The invoker class responsible for storing and executing a list of commands.
+// The invoker class responsible for storing and executing a list of commands.
 class TestInvoker {
     private final List<Command> commands = new ArrayList<>();
 
